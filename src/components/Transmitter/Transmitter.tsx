@@ -30,6 +30,7 @@ const Transmitter = ({ socket }: Props) => {
   const [loading, setLoading] = useState(false);
   const [plots, setPlots] = useState<IPlot[]>([]);
   const [currentPlot, setCurrentPlot] = useState(0);
+  const [disableFrames, setDisableFrames] = useState(false)
 
   const {
     register,
@@ -115,7 +116,7 @@ const Transmitter = ({ socket }: Props) => {
           }}
         />
         <TextField
-          disabled={loading}
+          disabled={loading || disableFrames}
           fullWidth
           type="number"
           placeholder="2"
@@ -155,6 +156,7 @@ const Transmitter = ({ socket }: Props) => {
           plots={plots}
           currentPlot={currentPlot}
           frames={frames}
+          setDisableFrames={setDisableFrames}
         />
       </Box>
     </Box>
