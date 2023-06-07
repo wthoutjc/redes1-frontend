@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Box,
   Button,
@@ -12,21 +11,30 @@ import {
 import { useForm } from "react-hook-form";
 
 // Interfaces
-import { IFlag } from "../../interfaces";
+import { ITrama } from "../../interfaces";
+import { Socket } from "socket.io-client";
 
 // Icons
 import SendIcon from "@mui/icons-material/Send";
 
-// Components
-import { ResponseSkeleton } from "../../components";
+// Utils
+import { toBinary } from "../../utils";
 
-const Response = () => {
-  const [response, setResponse] = useState(null);
-  const handleResponse = () => undefined;
+interface Props {
+  trama: ITrama;
+  socket: Socket;
+}
 
-  const { watch, handleSubmit } = useForm<IFlag>();
-
-  if (!response) return <ResponseSkeleton />;
+const Response = ({ trama, socket }: Props) => {
+  const handleResponse = () => {
+    socket.emit("b-response", trama.message)
+  };
+  
+  const { watch, handleSubmit } = useForm<ITrama>({
+    defaultValues: {
+      ...trama,
+    },
+  });
 
   return (
     <Box
@@ -55,7 +63,7 @@ const Response = () => {
               <TextField
                 disabled
                 id="outlined-disabled"
-                value={"No indicator"}
+                value={watch("indicator")}
               />
             }
             label="Indicador"
@@ -108,6 +116,17 @@ const Response = () => {
                   ml: 1,
                 }}
               />
+              <FormControlLabel
+                control={
+                  <Checkbox disabled checked={watch("sendConfirmation")} />
+                }
+                label="RC" // SC = Send Confirmation
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  ml: 1,
+                }}
+              />
             </Box>
             <Box>
               <Typography variant="body2">
@@ -120,7 +139,7 @@ const Response = () => {
               <TextField
                 disabled
                 id="outlined-disabled"
-                value={1}
+                value={toBinary(watch("sequence"))}
                 sx={{ width: 50, ml: 2 }}
               />
             }
@@ -132,7 +151,11 @@ const Response = () => {
           />
           <FormControlLabel
             control={
-              <TextField disabled id="outlined-disabled" value={"No message"} />
+              <TextField
+                disabled
+                id="outlined-disabled"
+                value={watch("message")}
+              />
             }
             label="Información"
             sx={{
@@ -145,7 +168,7 @@ const Response = () => {
               <TextField
                 disabled
                 id="outlined-disabled"
-                value={"No indicator"}
+                value={toBinary(watch("sequence"))}
               />
             }
             label="Indicador"
@@ -166,30 +189,6 @@ const Response = () => {
           </Button>
         </Box>
       </form>
-      <Box
-        sx={{
-          display: "flex",
-          p: 3,
-          width: "100%",
-        }}
-      >
-        <FormControlLabel
-          control={
-            <TextField
-              fullWidth
-              disabled
-              id="outlined-disabled"
-              value={"No indicator"}
-            />
-          }
-          label="Mensaje recibido"
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            width: "100%",
-          }}
-        />
-      </Box>
     </Box>
   );
 };

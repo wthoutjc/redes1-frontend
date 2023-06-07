@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Box, Divider, Typography } from "@mui/material";
 
 // Socket Context
@@ -17,12 +17,18 @@ import {
   MainSkeleton,
   Receiver,
   Response,
+  ResponseMessage,
+  ResponseSkeleton,
   Transmitter,
 } from "../../components";
+
+// Interfaces
+import { ITrama } from "../../interfaces";
 
 const Main = () => {
   const dispatch = useAppDispatch();
   const { socket, setConnected } = useContext(SocketContext);
+  const [response, setResponse] = useState<null | ITrama>(null);
 
   useEffect(() => {
     if (socket) {
@@ -38,6 +44,12 @@ const Main = () => {
       dispatch(newNotification(notification));
     }
   }, [socket, setConnected, dispatch]);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("f-response", (response: ITrama) => setResponse(response));
+    }
+  }, [socket]);
 
   if (!socket) return <MainSkeleton />;
 
@@ -74,14 +86,19 @@ const Main = () => {
           <Divider sx={{ mt: 2 }} flexItem variant="middle" />
           <Receiver socket={socket} />
           <Divider sx={{ mt: 2 }} flexItem variant="middle" />
-          <Response />
+          {response ? (
+            <Response socket={socket} trama={response} />
+          ) : (
+            <ResponseSkeleton />
+          )}
+          <ResponseMessage socket={socket} />
         </Box>
         <Box
           sx={{
             width: "25%",
           }}
         >
-          <FrameSequence />
+          <FrameSequence socket={socket} />
         </Box>
       </Box>
     </Box>

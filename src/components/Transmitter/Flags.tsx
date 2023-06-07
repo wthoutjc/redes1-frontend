@@ -15,7 +15,7 @@ import { Socket } from "socket.io-client";
 import { useForm } from "react-hook-form";
 
 // Interfaces
-import { IFlag, IPlot } from "../../interfaces";
+import { ITrama, IPlot } from "../../interfaces";
 
 // Icons
 import SendIcon from "@mui/icons-material/Send";
@@ -46,25 +46,39 @@ const Flags = ({
 }: Props) => {
   const dispatch = useAppDispatch();
 
-  const { watch, setValue, handleSubmit, register } = useForm<IFlag>({
+  const { watch, setValue, handleSubmit, register } = useForm<ITrama>({
     defaultValues: {
       indicator: 0b00000000,
       startMessage: true,
       endMessage: false,
       requestConfirmation: false,
+      sendConfirmation: false,
       sequence: currentPlot,
     },
   });
 
   const startMessage = watch("startMessage");
   const endMessage = watch("endMessage");
+  const requestConfirmation = watch("requestConfirmation");
 
-  const handleSend = (data: IFlag) => {
+  const handleSend = (data: ITrama) => {
     if (plots.length === 0) {
       const notification = {
         id: uuid(),
         title: "Error",
         message: "No se ha ingresado un mensaje",
+        type: "error" as "error" | "success" | "info" | "warning",
+        autoDismiss: 5000,
+      };
+      dispatch(newNotification(notification));
+      return;
+    }
+
+    if (!frames) {
+      const notification = {
+        id: uuid(),
+        title: "Error",
+        message: "No se ha ingresado un número de frames",
         type: "error" as "error" | "success" | "info" | "warning",
         autoDismiss: 5000,
       };
@@ -103,6 +117,14 @@ const Flags = ({
   useEffect(() => {
     if (startMessage) setValue("endMessage", !startMessage);
   }, [startMessage, endMessage, setValue]);
+
+  useEffect(() => {
+    if (requestConfirmation) {
+      setValue("message", "Control, permiso para transmtir");
+    } else {
+      setValue("message", plots[currentPlot]?.plot);
+    }
+  }, [requestConfirmation, setValue, currentPlot, plots]);
 
   if (loading) return <Box>Cargando...</Box>;
 
@@ -181,6 +203,16 @@ const Flags = ({
               }}
               {...register("requestConfirmation")}
             />
+            <FormControlLabel
+              control={<Checkbox checked={watch("sendConfirmation")} />}
+              label="SC" // SC = Send Confirmation
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                ml: 1,
+              }}
+              {...register("sendConfirmation")}
+            />
           </Box>
           <Box>
             <Typography variant="body2">Semántica: Trama de datos</Typography>
@@ -206,7 +238,7 @@ const Flags = ({
             <TextField
               disabled
               id="outlined-disabled"
-              value={plots[currentPlot]?.plot || "No message"}
+              value={watch("message") || "No message"}
             />
           }
           label="Información"

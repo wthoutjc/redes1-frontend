@@ -6,7 +6,7 @@ import { Socket } from "socket.io-client";
 
 // Components
 import { RecieverSkeleton } from "../../components";
-import { IFlag } from "../../interfaces";
+import { ITrama } from "../../interfaces";
 
 // Utils
 import { toBinary } from "../../utils";
@@ -16,10 +16,13 @@ interface Props {
 }
 
 const Receiver = ({ socket }: Props) => {
-  const [currenPlot, setCurrenPlot] = useState<null | IFlag>(null);
+  const [currenPlot, setCurrenPlot] = useState<null | ITrama>(null);
 
   useEffect(() => {
-    socket.on("f-message", (plot: IFlag) => setCurrenPlot(plot));
+    socket.on("f-message", (plot: ITrama) => {
+      console.log(plot);
+      setCurrenPlot(plot);
+    });
   }, [socket]);
 
   if (!currenPlot) return <RecieverSkeleton />;
@@ -31,6 +34,7 @@ const Receiver = ({ socket }: Props) => {
     startMessage,
     endMessage,
     requestConfirmation,
+    sendConfirmation,
   } = currenPlot;
 
   return (
@@ -72,7 +76,7 @@ const Receiver = ({ socket }: Props) => {
           id="outlined-disabled"
           value={`${startMessage ? "1" : "0"}${endMessage ? "1" : "0"}${
             requestConfirmation ? "1" : "0"
-          }${sequence + 1}`}
+          }${sendConfirmation ? "1" : "0"}${sequence}`}
         />
         <FormControlLabel
           control={

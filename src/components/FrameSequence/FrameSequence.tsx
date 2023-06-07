@@ -1,6 +1,24 @@
-import { Box, Paper, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
+import { Box, CircularProgress, Paper, Typography } from "@mui/material";
 
-const FrameSequence = () => {
+// IScoket
+import { Socket } from "socket.io-client";
+
+// Interfaces
+import { ISequence } from "../../interfaces";
+import { Sequence } from ".";
+
+interface Props {
+  socket: Socket;
+}
+
+const FrameSequence = ({ socket }: Props) => {
+  const [sequence, setSequence] = useState<ISequence[]>([]);
+
+  useEffect(() => {
+    socket.on("f-frame_sequence", (data) => setSequence(data));
+  }, [socket]);
+
   return (
     <Paper
       elevation={10}
@@ -24,18 +42,38 @@ const FrameSequence = () => {
         <Typography variant="body1" fontWeight={600} sx={{ mb: 1 }}>
           Secuencia de tramas:
         </Typography>
-        <Box
-          sx={{
-            width: "100%",
-            display: "flex",
-            p: 2,
-            backgroundColor: "background.default",
-            overflowX: "auto",
-            borderRadius: 1,
-          }}
-        >
-          xd
-        </Box>
+        {sequence.length > 0 ? (
+          <Box
+            sx={{
+              width: "100%",
+              display: "flex",
+              flexDirection: "column",
+              backgroundColor: "background.default",
+              overflowX: "auto",
+              borderRadius: 1,
+              p: 1,
+            }}
+          >
+            {sequence.map((frame, index) => (
+              <Sequence key={index} {...frame} />
+            ))}
+          </Box>
+        ) : (
+          <Box
+            sx={{
+              width: "100%",
+              display: "flex",
+              backgroundColor: "background.default",
+              p: 2,
+              borderRadius: 1,
+            }}
+          >
+            <CircularProgress size={25} />
+            <Typography variant="body1" fontWeight={400} sx={{ ml: 1 }}>
+              Esperando secuencia de tramas...
+            </Typography>
+          </Box>
+        )}
       </Box>
     </Paper>
   );
