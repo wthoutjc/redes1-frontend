@@ -86,20 +86,20 @@ const Flags = ({
       return;
     }
 
-    if (currentPlot >= frames) {
-      const notification = {
-        id: uuid(),
-        title: "Error",
-        message: "Trama completada",
-        type: "error" as "error" | "success" | "info" | "warning",
-        autoDismiss: 5000,
-      };
-      dispatch(newNotification(notification));
-      return;
-    }
+    // if (currentPlot >= frames) {
+    //   const notification = {
+    //     id: uuid(),
+    //     title: "Error",
+    //     message: "Trama completada",
+    //     type: "error" as "error" | "success" | "info" | "warning",
+    //     autoDismiss: 5000,
+    //   };
+    //   dispatch(newNotification(notification));
+    //   return;
+    // }
 
     setLoading(true);
-    socket.emit("message", JSON.stringify(data));
+    socket.emit("message", JSON.stringify({ ...data, frames }));
     setLoading(false);
   };
 
@@ -121,8 +121,10 @@ const Flags = ({
   useEffect(() => {
     if (requestConfirmation) {
       setValue("message", "Control, permiso para transmtir");
+      setValue("sequence", -1);
     } else {
       setValue("message", plots[currentPlot]?.plot);
+      setValue("sequence", currentPlot);
     }
   }, [requestConfirmation, setValue, currentPlot, plots]);
 
@@ -223,7 +225,7 @@ const Flags = ({
             <TextField
               disabled
               id="outlined-disabled"
-              value={currentPlot}
+              value={watch("sequence")}
               sx={{ width: 50, ml: 2 }}
             />
           }
