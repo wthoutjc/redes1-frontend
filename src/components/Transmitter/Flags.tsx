@@ -34,6 +34,7 @@ interface Props {
   plots: IPlot[];
   currentPlot: number;
   frames: number;
+  setDisableFrames: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const Flags = ({
@@ -43,6 +44,7 @@ const Flags = ({
   plots,
   currentPlot,
   frames,
+  setDisableFrames,
 }: Props) => {
   const dispatch = useAppDispatch();
 
@@ -102,6 +104,10 @@ const Flags = ({
     socket.emit("message", JSON.stringify({ ...data, frames }));
     setLoading(false);
   };
+
+  useEffect(() => {
+    if (currentPlot > 0) setDisableFrames(true);
+  }, [currentPlot, setDisableFrames]);
 
   useEffect(() => {
     if (plots[currentPlot]) {
