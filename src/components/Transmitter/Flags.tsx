@@ -112,7 +112,7 @@ const Flags = ({
   useEffect(() => {
     if (plots[currentPlot]) {
       setValue("indicator", plots[currentPlot].id);
-      setValue("message", plots[currentPlot].plot);
+      setValue("message", plots[currentPlot - 1].plot);
     }
   }, [plots, currentPlot, setValue]);
 
