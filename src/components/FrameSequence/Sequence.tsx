@@ -16,7 +16,7 @@ const Sequence = ({ error, message }: ISequence) => {
           sx={{ mb: 1 }}
           color="error"
         >
-          <strong>[ERROR] Tx:</strong> {error}
+          {error}
         </Typography>
       ) : (
         <Typography
