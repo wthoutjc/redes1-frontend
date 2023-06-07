@@ -120,7 +120,7 @@ const Response = ({ trama, socket }: Props) => {
                 control={
                   <Checkbox disabled checked={watch("sendConfirmation")} />
                 }
-                label="RC" // SC = Send Confirmation
+                label="SC" // SC = Send Confirmation
                 sx={{
                   display: "flex",
                   flexDirection: "column",
