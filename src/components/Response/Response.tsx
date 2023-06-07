@@ -27,9 +27,9 @@ interface Props {
 
 const Response = ({ trama, socket }: Props) => {
   const handleResponse = () => {
-    socket.emit("b-response", trama.message)
+    socket.emit("b-response", trama.message);
   };
-  
+
   const { watch, handleSubmit } = useForm<ITrama>({
     defaultValues: {
       ...trama,
@@ -43,6 +43,16 @@ const Response = ({ trama, socket }: Props) => {
         flexDirection: "column",
       }}
     >
+      <Box
+        sx={{
+          p: 2,
+          pb: 0,
+        }}
+      >
+        <Typography variant="body1" fontWeight={600}>
+          Respuesta
+        </Typography>
+      </Box>
       <form
         onSubmit={handleSubmit(handleResponse)}
         style={{
