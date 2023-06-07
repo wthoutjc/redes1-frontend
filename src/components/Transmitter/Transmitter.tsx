@@ -64,10 +64,6 @@ const Transmitter = ({ socket }: Props) => {
   }, [message, frames]);
 
   useEffect(() => {
-    socket.emit("b-current_plot", currentPlot);
-  }, [socket, currentPlot]);
-
-  useEffect(() => {
     socket.on("f-current_plot", (data) => setCurrentPlot(data));
   }, [socket]);
 
