@@ -127,10 +127,8 @@ const Flags = ({
   useEffect(() => {
     if (requestConfirmation) {
       setValue("message", "Control, permiso para transmtir");
-      setValue("sequence", -1);
     } else {
       setValue("message", plots[currentPlot]?.plot);
-      setValue("sequence", currentPlot);
     }
   }, [requestConfirmation, setValue, currentPlot, plots]);
 
