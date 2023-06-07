@@ -19,22 +19,38 @@ import SendIcon from "@mui/icons-material/Send";
 
 // Utils
 import { toBinary } from "../../utils";
+import { useEffect, useState } from "react";
+import { ResponseSkeleton } from ".";
 
 interface Props {
-  trama: ITrama;
   socket: Socket;
 }
 
-const Response = ({ trama, socket }: Props) => {
+const Response = ({ socket }: Props) => {
+  const [response, setResponse] = useState<null | ITrama>(null);
+
+  const { watch, handleSubmit, setValue } = useForm<ITrama>();
+
   const handleResponse = () => {
-    socket.emit("b-response", trama.message);
+    if (socket && response) socket.emit("b-response", response.message);
   };
 
-  const { watch, handleSubmit } = useForm<ITrama>({
-    defaultValues: {
-      ...trama,
-    },
-  });
+  useEffect(() => {
+    if (socket) {
+      socket.on("f-response", (response: ITrama) => {
+        setValue("indicator", response.indicator);
+        setValue("startMessage", response.startMessage);
+        setValue("endMessage", response.endMessage);
+        setValue("requestConfirmation", response.requestConfirmation);
+        setValue("sendConfirmation", response.sendConfirmation);
+        setValue("sequence", response.sequence);
+        setValue("message", response.message);
+        setResponse(response);
+      });
+    }
+  }, [socket, setValue]);
+
+  if (!response) return <ResponseSkeleton />;
 
   return (
     <Box
@@ -178,7 +194,7 @@ const Response = ({ trama, socket }: Props) => {
               <TextField
                 disabled
                 id="outlined-disabled"
-                value={toBinary(watch("sequence"))}
+                value={toBinary(watch("indicator"))}
               />
             }
             label="Indicador"

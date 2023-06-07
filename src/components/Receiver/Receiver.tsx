@@ -19,10 +19,7 @@ const Receiver = ({ socket }: Props) => {
   const [currenPlot, setCurrenPlot] = useState<null | ITrama>(null);
 
   useEffect(() => {
-    socket.on("f-message", (plot: ITrama) => {
-      console.log(plot);
-      setCurrenPlot(plot);
-    });
+    socket.on("f-message", (plot: ITrama) => setCurrenPlot(plot));
   }, [socket]);
 
   if (!currenPlot) return <RecieverSkeleton />;

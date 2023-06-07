@@ -36,6 +36,7 @@ const Transmitter = ({ socket }: Props) => {
     register,
     watch,
     formState: { errors },
+    setValue,
   } = useForm<ITransmitter>({
     defaultValues: {
       message: "",
@@ -65,7 +66,14 @@ const Transmitter = ({ socket }: Props) => {
 
   useEffect(() => {
     socket.on("f-current_plot", (data) => setCurrentPlot(data));
-  }, [socket]);
+    socket.on("f-reset", () => {
+      setPlots([]);
+      setCurrentPlot(0);
+      setDisableFrames(false);
+      setValue("frames", 0);
+      setValue("message", "");
+    })
+  }, [socket, setValue]);
 
   return (
     <Box
