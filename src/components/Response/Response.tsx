@@ -73,7 +73,7 @@ const Response = ({ trama, socket }: Props) => {
               <TextField
                 disabled
                 id="outlined-disabled"
-                value={watch("indicator")}
+                value={toBinary(watch("indicator"))}
               />
             }
             label="Indicador"
