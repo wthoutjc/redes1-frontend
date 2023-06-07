@@ -165,7 +165,7 @@ const Response = ({ socket }: Props) => {
               <TextField
                 disabled
                 id="outlined-disabled"
-                value={toBinary(watch("sequence"))}
+                value={watch("sequence")}
                 sx={{ width: 50, ml: 2 }}
               />
             }
